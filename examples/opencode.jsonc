@@ -1,0 +1,18 @@
+// Optional: merge into your project's opencode.json(c).
+// Enable Jira MCP only in projects that use Jira (its tool schemas cost context).
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "jira": {
+      "type": "local",
+      "command": ["npx", "-y", "<your-jira-mcp-package>"],
+      "environment": { "JIRA_URL": "{env:JIRA_URL}", "JIRA_TOKEN": "{env:JIRA_TOKEN}" },
+      "enabled": true
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": false
+    }
+  }
+}

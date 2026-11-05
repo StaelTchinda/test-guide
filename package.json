@@ -1,0 +1,12 @@
+{
+  "name": "test-guide",
+  "version": "0.1.0",
+  "description": "A manual-testing companion for opencode: builds context, designs evidence-based scenarios, and guides you step by step while you run every command.",
+  "type": "module",
+  "bin": { "test-guide": "bin/install.mjs" },
+  "files": ["bin", "agents", "commands", "skills", "examples"],
+  "engines": { "node": ">=18" },
+  "keywords": ["opencode", "agent-skills", "manual-testing", "qa", "ai-agent", "testing"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/<owner>/test-guide.git" }
+}

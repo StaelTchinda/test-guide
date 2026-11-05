@@ -1,0 +1,3 @@
+node_modules/
+.manual-tests/
+.DS_Store
