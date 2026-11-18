@@ -1,3 +1,4 @@
 # Store text files with LF in the repo. Git converts to the local line endings on checkout.
 * text=auto
 *.png binary
+*.sh text eol=lf
