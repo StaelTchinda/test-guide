@@ -56,6 +56,29 @@ for (const cmd of list("commands", ".md")) {
   });
 }
 
+// The version in the release-please manifest is the source of truth. Other files must match it.
+test("version: package.json and extra-files match the release-please manifest", () => {
+  const version = JSON.parse(read(".release-please-manifest.json"))["."];
+  assert.equal(JSON.parse(read("package.json")).version, version, "package.json version (do not change it by hand)");
+
+  const config = JSON.parse(read("release-please-config.json")).packages["."];
+  for (const entry of config["extra-files"] ?? []) {
+    const file = typeof entry === "string" ? entry : entry.path;
+    const text = read(file);
+    if (typeof entry === "object" && entry.jsonpath) {
+      const value = entry.jsonpath
+        .replace(/^\$\.?/, "")
+        .split(".")
+        .reduce((o, k) => o?.[k], JSON.parse(text));
+      assert.equal(value, version, `${file} ${entry.jsonpath}`);
+    } else {
+      const lines = text.split(/\r?\n/).filter((l) => l.includes("x-release-please-version"));
+      assert.ok(lines.length > 0, `${file}: no line with x-release-please-version`);
+      for (const line of lines) assert.ok(line.includes(version), `${file}: "${line.trim()}" must contain ${version}`);
+    }
+  }
+});
+
 for (const agent of list("agents", ".md")) {
   test(`agent ${agent}: valid and linked`, () => {
     const text = read("agents", agent);
