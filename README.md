@@ -25,7 +25,7 @@ npx github:StaelTchinda/test-guide
 npx github:StaelTchinda/test-guide --global
 
 # A fixed version
-npx github:StaelTchinda/test-guide#v0.2.0 # x-release-please-version
+npx github:StaelTchinda/test-guide#v0.3.0 # x-release-please-version
 
 # Any agent supported by skills.sh
 npx skills add StaelTchinda/test-guide
