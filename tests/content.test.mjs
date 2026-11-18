@@ -1,4 +1,4 @@
-// Checks that skills, commands and agents are valid and that their links point to real files.
+// Checks that the skills are valid and that their links point to real files and sections.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
@@ -7,8 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = (...p) => readFileSync(join(root, ...p), "utf8");
-const list = (dir, ext) => readdirSync(join(root, dir)).filter((f) => !ext || f.endsWith(ext));
-const skills = list("skills");
+const skills = readdirSync(join(root, "skills"));
 
 // Returns the YAML frontmatter as a { key: value } object (flat keys only).
 function frontmatter(text) {
@@ -22,8 +21,13 @@ function frontmatter(text) {
   return out;
 }
 
-// Skill names mentioned in a text, for example `test-guide-api`.
-const skillRefs = (text) => [...new Set(text.match(/\btest-guide-[a-z]+\b/g) ?? [])];
+// GitHub-style anchor of a heading: lowercase, spaces → "-", most punctuation removed.
+const anchor = (heading) =>
+  heading
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N} _-]/gu, "")
+    .replace(/ /g, "-");
 
 for (const skill of skills) {
   test(`skill ${skill}: valid frontmatter`, () => {
@@ -35,24 +39,15 @@ for (const skill of skills) {
     assert.ok(fm.description.length <= 1024, "description must be max 1024 characters");
   });
 
-  test(`skill ${skill}: links point to real files and skills`, () => {
+  test(`skill ${skill}: linked files and sections exist`, () => {
     const text = read("skills", skill, "SKILL.md");
     for (const file of text.match(/\b(?:templates|references|scripts)\/[\w./-]+\.\w+/g) ?? []) {
       assert.ok(existsSync(join(root, "skills", skill, file)), `missing file ${file}`);
     }
-    for (const ref of skillRefs(text)) {
-      assert.ok(skills.includes(ref), `unknown skill ${ref}`);
+    const anchors = (text.match(/^#+ .+$/gm) ?? []).map((h) => anchor(h.replace(/^#+ /, "")));
+    for (const [, link] of text.matchAll(/\]\(#([^)]+)\)/g)) {
+      assert.ok(anchors.includes(link), `missing section #${link}`);
     }
-  });
-}
-
-for (const cmd of list("commands", ".md")) {
-  test(`command ${cmd}: valid and linked`, () => {
-    const text = read("commands", cmd);
-    const fm = frontmatter(text);
-    assert.ok(fm?.description, "description is required");
-    if (fm.agent) assert.ok(existsSync(join(root, "agents", `${fm.agent}.md`)), `unknown agent ${fm.agent}`);
-    for (const ref of skillRefs(text)) assert.ok(skills.includes(ref), `unknown skill ${ref}`);
   });
 }
 
@@ -78,11 +73,3 @@ test("version: package.json and extra-files match the release-please manifest", 
     }
   }
 });
-
-for (const agent of list("agents", ".md")) {
-  test(`agent ${agent}: valid and linked`, () => {
-    const text = read("agents", agent);
-    assert.ok(frontmatter(text)?.description, "description is required");
-    for (const ref of skillRefs(text)) assert.ok(skills.includes(ref), `unknown skill ${ref}`);
-  });
-}

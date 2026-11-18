@@ -18,32 +18,30 @@ A manual-testing companion for [opencode](https://opencode.ai). It builds contex
 ## Install
 
 ```bash
-# Agent + commands + skills into the current project (opencode)
-npx github:<owner>/test-guide
+# Into the current project (opencode: .opencode/skills/)
+npx github:StaelTchinda/test-guide
 
-# Global install
-npx github:<owner>/test-guide --global
+# Global install (~/.config/opencode/skills/)
+npx github:StaelTchinda/test-guide --global
 
-# Skills only (works in any agent supported by skills.sh)
-npx skills add <owner>/test-guide
+# A fixed version
+npx github:StaelTchinda/test-guide#v0.2.0 # x-release-please-version
+
+# Any agent supported by skills.sh
+npx skills add StaelTchinda/test-guide
 ```
 
-Uninstall with `npx github:<owner>/test-guide --uninstall` (add `--global` if installed globally).
+Uninstall with `npx github:StaelTchinda/test-guide --uninstall` (add `--global` if installed globally).
 
 ## Usage
 
-1. Start `opencode`, press **Tab** and select **test-guide**.
-2. Choose a model with `/models` (no model is pinned).
-3. Run `/test-start user-me docs/specs/user-me.md PROJ-123`.
+Start `opencode` (any agent) and ask, for example:
 
-| Command                          | Purpose                                               |
-| -------------------------------- | ----------------------------------------------------- |
-| `/test-start <session> <target>` | New session (target: feature, spec paths, Jira key)   |
-| `/test-resume <session>`         | Continue and re-run only impacted scenarios           |
-| `/test-status`                   | Status Board                                          |
-| `/test-report`                   | Final report                                          |
-| `/test-bug S<n>`                 | Bug draft for a failed scenario (optional)            |
-| `/test-automate [S…]`            | Turn passed scenarios into automated tests (optional) |
+- "Guide me through a manual test of the `/users/me` endpoint, spec in `docs/specs/user-me.md`."
+- "Manually test PROJ-123 with me."
+- "Resume the test session `user-me`."
+
+The agent loads the `test-guide` skill and follows its phases.
 
 ## Workflow
 
@@ -51,22 +49,22 @@ Uninstall with `npx github:<owner>/test-guide --uninstall` (add `--global` if in
 1. **Context**: system under test, rules `[Rn]` from ticket, spec and code, gaps → you confirm.
 2. **Scenarios**: a short list of critical scenarios → you adjust and say "create" → one file per scenario.
 3. **Execution**: one Step Card per step (`n / N`, with _What it means_) → you run it → Result Card (expected vs. actual).
-4. **Close**: report, cleanup commands, plus optional bug draft or automation.
+4. **Close**: report and cleanup commands. On request, a bug draft for a failed scenario.
 
 Session state lives in `.manual-tests/<session>/` (context, `scenarios/S<nn>-<slug>.md`, log, `state.env`, harness, evidence, report), so you can resume across days. Add it to `.gitignore` or commit it as test evidence.
 
 ## What's inside
 
-| Part                              | Type   | Loaded                                                                                  |
-| --------------------------------- | ------ | --------------------------------------------------------------------------------------- |
-| `test-guide`                      | Agent  | You select it (Tab). It can't run commands; it only writes `.manual-tests/**` freely.   |
-| `test-guide`                      | Skill  | Every session: phases, rules, card formats, templates for scenario files and Step Cards |
-| `test-guide-harness`              | Skill  | Phase 0: harness file, `state.env`, helpers, cleanup                                    |
-| `test-guide-api` · `-cli` · `-ui` | Skills | Only for a step on that surface                                                         |
-| `test-guide-jira`                 | Skill  | Only when a Jira key is given                                                           |
-| `test-guide-bug` · `-automate`    | Skills | Only on request                                                                         |
+One skill, `skills/test-guide/`:
 
-The agent enforces "you run every command" through permissions. With skills only, it's an instruction the model is asked to follow.
+| File                     | Content                                                                     |
+| ------------------------ | --------------------------------------------------------------------------- |
+| `SKILL.md`               | Golden rules, phases, harness, rules for API / CLI / UI steps, card formats |
+| `templates/scenario.md`  | One file per scenario                                                       |
+| `templates/step-card.md` | The Step Card format                                                        |
+| `references/jira.md`     | Read only when a Jira key is given                                          |
+
+"You run every command" is an instruction in the skill. To enforce it, deny the `bash` tool in your agent's permissions.
 
 ## Optional: Jira and Playwright
 
@@ -75,7 +73,7 @@ See `examples/opencode.jsonc`. Enable the Jira MCP server only in projects that 
 ## Contributing
 
 - `npm run format` formats the files with Prettier. `npm run format:check` and `npm test` run in CI on each PR.
-- `npm test` checks that each skill has a valid `name` (equal to its folder) and `description`, that all linked skills and files exist, and that the installer installs and uninstalls.
+- `npm test` checks that each skill has a valid `name` (equal to its folder) and `description`, that all linked files and sections exist, that the version matches the release-please manifest, and that the installer installs and uninstalls.
 - Write commit messages as [Conventional Commits](https://www.conventionalcommits.org/): `feat: …`, `fix: …`, `docs: …`. On `master`, release-please uses them to open a release PR that updates the version and `CHANGELOG.md`. Merging that PR creates the tag and the GitHub release. Do not change the version by hand.
 
 ## License
