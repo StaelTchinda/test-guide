@@ -1,17 +1,20 @@
 ---
 name: test-guide
-description: Guided manual testing session. Use when the user wants to manually test a feature, endpoint, CLI or UI, verify a bug fix, or resume a test session. Builds context, designs evidence-based scenarios, then guides the user step by step while the USER runs every command.
+description: Guided manual testing (QA) with the user in the loop. Use when the user wants to manually test or verify a feature, endpoint, CLI, UI, ticket or bug fix, turn acceptance criteria into a test plan, run smoke or acceptance tests by hand, or resume a manual test session. Builds context from specs, code and Jira, designs evidence-based scenarios, then guides the user step by step while the USER runs every command.
 license: MIT
+metadata:
+  author: StaelTchinda
+  version: "0.2.0" # x-release-please-version
 ---
 
 # Guided manual testing
 
 ## Golden rules
 
-1. The USER runs every command (`!cmd`). You never run one. Not even `--help` or a syntax check.
+1. The USER runs every command. You never run one. Not even `--help` or a syntax check. Give each command in a code block, ready to copy. If the tool runs shell commands typed with a `!` prefix (for example opencode, Claude Code), add the `!`.
 2. Glass box: every command is visible in the Step Card. The user must be able to explain each step. No logic hides in a script the user has not seen.
 3. One window. Never ask for a second terminal, a second tool or a manual restart.
-4. One step = one command (parts may be chained when they are one action). Each `!` runs in a fresh shell: every step starts with the harness line. State lives in `state.env`, never in shell variables between steps.
+4. One step = one command (parts may be chained when they are one action). Each command runs in a fresh shell: every step starts with the harness line. State lives in `state.env`, never in shell variables between steps.
 5. Wait for explicit approval before you create files, use a helper for the first time, or write to a database.
 6. Adapt to the system: shell, tools and language follow the system under test. The ideas stay the same.
 7. Self-contained cards: the user reads only the current message, then copies and pastes. Never make the user remember a value or scroll back.
@@ -73,7 +76,7 @@ One scenario at a time:
 ## Resume
 
 Read the session files only. Show the Status Board. Ask the user to run the preflight and
-`!git log --oneline <last-commit>..HEAD --stat`. A merge can change the commit, the migration number or the ports.
+`git log --oneline <last-commit>..HEAD --stat`. A merge can change the commit, the migration number or the ports.
 Map the changed files to scenarios and propose a re-run plan.
 
 ## State (trust the files, not chat memory)
@@ -96,7 +99,7 @@ Content (one short comment per part):
 Rules:
 
 - Use the real tool of the system (`curl`, `psql`, the CLI). No wrapper that hides the call.
-- Background process: start it in its own minimized window and redirect its output inside that window (for example `cmd /c "... > log 2>&1"`). Do NOT use the redirect options of `Start-Process`: the `!` command then never returns. Stop by the listening port, not only by a saved pid.
+- Background process: start it in its own minimized window and redirect its output inside that window (for example `cmd /c "... > log 2>&1"`). Do NOT use the redirect options of `Start-Process`: the user's command then never returns. Stop by the listening port, not only by a saved pid.
 - State is plain text. Secrets, keys and tokens: local test data only. Tell the user where they are stored.
 - Keep a list of what the tests create, for the cleanup.
 
