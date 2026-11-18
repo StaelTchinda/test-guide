@@ -1,19 +1,55 @@
 # test-guide
 
-A manual-testing companion for [opencode](https://opencode.ai). It builds context from your specs, code and Jira, designs evidence-based test scenarios with you, and then walks you through them step by step. **You run every command**; it explains what to do, what to expect, and compares the result.
+An [agent skill](https://agentskills.io) for guided manual testing, made for [opencode](https://opencode.ai) and other coding agents. It builds context from your specs, code and Jira, designs evidence-based test scenarios with you, and then walks you through them step by step. **You run every command**; it explains what to do, what to expect, and compares the result.
+
+## A session in 1 minute
+
+The full files of this session are in [`examples/session/`](examples/session/).
+
+> **You:** Manually test the new `DELETE /todos/:id` with me. Spec in `docs/api.md`.
+
+**Agent** (Phase 1 · context):
 
 ```
-## ▶ S03 · Expired token                 [2/7 · ✅2 ❌0 ❓0]
-**Surface:** API    **Covers:** R2 (spec §3)
-**About this scenario:** Call the profile route with an expired token.
-**A PASS means:** A user with an old login cannot read data.
-
-### Step 1 / 1 · Call with the expired token
-!. ./.manual-tests/user-me/harness.sh; curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN_EXPIRED" localhost:8080/api/users/me
-**What this does:** loads the harness (and state.env), then prints only the HTTP status.
-**Expect:** 401
-**What it means:** the server refused the old token.
+[R1] Owner deletes → 204, row removed — docs/api.md §Delete
+[R2] Other user deletes → 403, row stays — docs/api.md §Delete, src/routes/todos.ts:42
+[R3] No token → 401 — src/middleware/auth.ts:10
+❓ Gap: a second DELETE of the same todo → 404 or 204? The spec is silent.
+Correct / missing?
 ```
+
+**Agent** (Phase 2 · scenarios): a list of 4 scenarios. You answer "create". It writes one file per scenario.
+
+**Agent** (Phase 3 · a Step Card):
+
+````
+## ▶ S02 · Other user cannot delete the todo      [1/4 · ✅1 ❌0 ❓0]
+**Surface:** API    **Covers:** R2
+**About this scenario:** Alice creates a todo. Bob tries to delete it.
+**A PASS means:** Nobody can delete the todos of another user.
+
+### Step 2 / 3 · Bob deletes Alice's todo
+```bash
+!. ./.manual-tests/todo-delete/harness.sh; curl -s -o /dev/null -w "%{http_code}" -X DELETE -H "Authorization: Bearer $TOKEN_BOB" $BASE/todos/$TODO_ID
+```
+**What this does:** loads the harness (and the saved tokens), sends the DELETE as Bob, prints only the HTTP status.
+**Expect:** 403
+**What it means:** the server refused Bob.
+````
+
+> **You:** `204`
+
+**Agent** (Result Card, after step 3):
+
+```
+## S02 · FAIL ❌
+| Check            | Expected | Actual |    |
+| Status           | 403      | 204    | ❌ |
+| Row still exists | 1        | 0      | ❌ |
+**What it means:** Bob deleted Alice's todo. The route checks the login, not the owner (src/routes/todos.ts:42).
+```
+
+**Agent** (Phase 4): writes [`report.md`](examples/session/report.md) and gives the cleanup command.
 
 ## Install
 
@@ -35,7 +71,7 @@ Uninstall with `npx github:StaelTchinda/test-guide --uninstall` (add `--global` 
 
 ## Usage
 
-Start `opencode` (any agent) and ask, for example:
+Start your agent (for example `opencode` or Claude Code) and ask, for example:
 
 - "Guide me through a manual test of the `/users/me` endpoint, spec in `docs/specs/user-me.md`."
 - "Manually test PROJ-123 with me."
@@ -64,11 +100,13 @@ One skill, `skills/test-guide/`:
 | `templates/step-card.md` | The Step Card format                                                        |
 | `references/jira.md`     | Read only when a Jira key is given                                          |
 
+An example of a complete session is in [`examples/session/`](examples/session/).
+
 "You run every command" is an instruction in the skill. To enforce it, deny the `bash` tool in your agent's permissions.
 
-## Optional: Jira and Playwright
+## Optional: Jira
 
-See `examples/opencode.jsonc`. Enable the Jira MCP server only in projects that use it.
+Connect a Jira MCP server to your agent. When you give a ticket key, the skill reads the ticket and its acceptance criteria. Without Jira tools, it asks you to paste them.
 
 ## Contributing
 

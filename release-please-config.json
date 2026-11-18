@@ -6,7 +6,7 @@
       "package-name": "test-guide",
       "bump-minor-pre-major": true,
       "include-component-in-tag": false,
-      "extra-files": ["README.md"]
+      "extra-files": ["README.md", "skills/test-guide/SKILL.md"]
     }
   }
 }
