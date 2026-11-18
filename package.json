@@ -1,6 +1,6 @@
 {
   "name": "test-guide",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A manual-testing companion for opencode: builds context, designs evidence-based scenarios, and guides you step by step while you run every command.",
   "type": "module",
   "bin": { "test-guide": "bin/install.mjs" },
