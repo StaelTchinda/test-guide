@@ -46,7 +46,7 @@ Show the brief and ask: "Correct / missing?"
 2. Put ambiguities under ❓ Open questions. Never guess.
 3. The user may add, remove or reorder. Wait for the word "create". Only then write one file per scenario from `templates/scenario.md`. The number of commands that the Step Cards will show must equal the number of rows in the Steps table.
 4. A scenario that needs a second window is a design defect. Redesign it.
-5. Each scenario starts from a known state (for example: empty the queue, create a fresh runtime). Before a reset, ask what to reset. Delete the data, not the database.
+5. Each scenario starts from a known state (for example: empty the queue, create a fresh test user). Before a reset, ask what to reset. Delete the data, not the database.
 6. Keep only the critical scenarios. Remove scenarios that are not relevant or that duplicate another. Split a scenario that mixes surfaces (for example CLI and UI).
 7. After you create the files, give their absolute paths, so the user can review them.
 
@@ -100,7 +100,7 @@ Rules:
 - State is plain text. Secrets, keys and tokens: local test data only. Tell the user where they are stored.
 - Keep a list of what the tests create, for the cleanup.
 
-Helper files (exception): allowed only when the system has no real interface for the action (example: no route creates a runtime and its bootstrap token).
+Helper files (exception): allowed only when the system has no real interface for the action (example: no route creates a test account with its API key).
 
 - Use the project's own function. One purpose. At most about 40 lines.
 - Show it in full, explain it line by line, and wait for "clear" before first use.

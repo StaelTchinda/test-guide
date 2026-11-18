@@ -43,7 +43,7 @@ Step 1 of a scenario also shows the scenario header. Later steps do not.
 ## Rules
 
 - **Step counter:** always `n / N`. If you add or remove a step, change the "Steps" table of the scenario file first, then N.
-- **What it means (step level):** say what the step has just done to the system or the data, in plain words. Write "an admin user now exists", not "CREATED - COUNT: 1 - TYPE: ROLE_ADMIN". One or two short sentences. Explain each technical term at its first use. Do not repeat the raw values of "Expect".
+- **What it means (step level):** say what the step has just done to the system or the data, in plain words. Write "an admin user now exists", not "INSERT 0 1". One or two short sentences. Explain each technical term at its first use. Do not repeat the raw values of "Expect".
 - **A PASS means (scenario level):** say what the whole scenario proves about the behavior of the system for the user. Example: "Only admins can open the page. All other users are refused."
 - Shorten long values (tokens, JSON) and say so.
 - The command is the full command. No hidden logic.
