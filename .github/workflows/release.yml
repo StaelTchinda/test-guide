@@ -1,0 +1,21 @@
+name: Release
+
+# On each push to master, release-please opens or updates a release PR
+# (version in package.json + CHANGELOG.md from feat:/fix: commits).
+# When you merge that PR, it creates the git tag and the GitHub release.
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
