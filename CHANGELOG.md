@@ -1,4 +1,11 @@
 # Changelog
+## [0.4.0](https://github.com/StaelTchinda/test-guide/compare/v0.3.0...v0.4.0) (2026-11-18)
+
+
+### Features
+
+* make the skill ready for skill marketplaces ([#8](https://github.com/StaelTchinda/test-guide/issues/8)) ([c42b2d8](https://github.com/StaelTchinda/test-guide/commit/c42b2d87abbd067f9e540c2d31adaad8fa81e90d))
+
 ## [0.3.0](https://github.com/StaelTchinda/test-guide/compare/v0.2.0...v0.3.0) (2026-11-18)
 
 
