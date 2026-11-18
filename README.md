@@ -34,19 +34,19 @@ Uninstall with `npx github:<owner>/test-guide --uninstall` (add `--global` if in
 2. Choose a model with `/models` (no model is pinned).
 3. Run `/test-start user-me docs/specs/user-me.md PROJ-123`.
 
-| Command | Purpose |
-|---|---|
-| `/test-start <session> <target>` | New session (target: feature, spec paths, Jira key) |
-| `/test-resume <session>` | Continue and re-run only impacted scenarios |
-| `/test-status` | Status Board |
-| `/test-report` | Final report |
-| `/test-bug S<n>` | Bug draft for a failed scenario (optional) |
-| `/test-automate [S…]` | Turn passed scenarios into automated tests (optional) |
+| Command                          | Purpose                                               |
+| -------------------------------- | ----------------------------------------------------- |
+| `/test-start <session> <target>` | New session (target: feature, spec paths, Jira key)   |
+| `/test-resume <session>`         | Continue and re-run only impacted scenarios           |
+| `/test-status`                   | Status Board                                          |
+| `/test-report`                   | Final report                                          |
+| `/test-bug S<n>`                 | Bug draft for a failed scenario (optional)            |
+| `/test-automate [S…]`            | Turn passed scenarios into automated tests (optional) |
 
 ## Workflow
 
 1. **Context**: system under test, rules `[Rn]` with sources, gaps → you confirm.
-2. **Scenarios**: table with expected results and *why each one proves correctness* → you adjust.
+2. **Scenarios**: table with expected results and _why each one proves correctness_ → you adjust.
 3. **Execution**: one Step Card at a time → you run it → Result Card (expected vs. actual).
 4. **Close**: report, plus optional bug draft or automation.
 
@@ -54,19 +54,25 @@ Session state lives in `.manual-tests/<session>/` (context, scenarios, log, repo
 
 ## What's inside
 
-| Part | Type | Loaded |
-|---|---|---|
-| `test-guide` | Agent | You select it (Tab). It can't run commands; it only writes `.manual-tests/**` freely. |
-| `test-guide` | Skill | Every session: phases, rules, card formats |
-| `test-guide-api` · `-cli` · `-ui` | Skills | Only for a step on that surface |
-| `test-guide-jira` | Skill | Only when a Jira key is given |
-| `test-guide-bug` · `-automate` | Skills | Only on request |
+| Part                              | Type   | Loaded                                                                                |
+| --------------------------------- | ------ | ------------------------------------------------------------------------------------- |
+| `test-guide`                      | Agent  | You select it (Tab). It can't run commands; it only writes `.manual-tests/**` freely. |
+| `test-guide`                      | Skill  | Every session: phases, rules, card formats                                            |
+| `test-guide-api` · `-cli` · `-ui` | Skills | Only for a step on that surface                                                       |
+| `test-guide-jira`                 | Skill  | Only when a Jira key is given                                                         |
+| `test-guide-bug` · `-automate`    | Skills | Only on request                                                                       |
 
 The agent enforces "you run every command" through permissions. With skills only, it's an instruction the model is asked to follow.
 
 ## Optional: Jira and Playwright
 
 See `examples/opencode.jsonc`. Enable the Jira MCP server only in projects that use it.
+
+## Contributing
+
+- `npm run format` formats the files with Prettier. `npm run format:check` and `npm test` run in CI on each PR.
+- `npm test` checks that each skill has a valid `name` (equal to its folder) and `description`, that all linked skills and files exist, and that the installer installs and uninstalls.
+- Write commit messages as [Conventional Commits](https://www.conventionalcommits.org/): `feat: …`, `fix: …`, `docs: …`. On `master`, release-please uses them to open a release PR that updates the version and `CHANGELOG.md`. Merging that PR creates the tag and the GitHub release. Do not change the version by hand.
 
 ## License
 
