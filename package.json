@@ -8,8 +8,6 @@
   },
   "files": [
     "bin",
-    "agents",
-    "commands",
     "skills",
     "examples"
   ],
@@ -32,6 +30,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<owner>/test-guide.git"
+    "url": "git+https://github.com/StaelTchinda/test-guide.git"
   }
 }
