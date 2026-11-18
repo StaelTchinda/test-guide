@@ -4,7 +4,7 @@ description: Guided manual testing (QA) with the user in the loop. Use when the 
 license: MIT
 metadata:
   author: StaelTchinda
-  version: "0.2.0" # x-release-please-version
+  version: "0.4.0" # x-release-please-version
 ---
 
 # Guided manual testing
